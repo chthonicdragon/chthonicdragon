@@ -2,6 +2,8 @@
 
 **AI Product Builder · LLM Workflows · AI-Assisted Development**
 
+Portfolio site source: [`/site`](./site) (React, TypeScript, Vite, Tailwind CSS, Framer Motion) — pending deployment.
+
 I design, build, and operate AI-native products from idea to production.
 
 My main project is **EsotericaOS**, a production web platform that connects personal knowledge, structured records, AI guidance, recurring workflows, community tools, and subscription features in one system.
