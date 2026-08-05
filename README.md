@@ -1,82 +1,71 @@
-# Daniil Gorozhankin
+# Daniil G.
 
-**AI Product Builder · AI Prototyping · LLM Workflows**
+**AI Product Builder · LLM Workflows · AI-Assisted Development**
 
-I build and operate digital products with AI-assisted development.
+I design, build, and operate AI-native products from idea to production.
 
-My main project is **EsotericaOS**, a production web platform that combines personal knowledge management, AI-assisted workflows, structured user data, subscription features, community tools, and more than 40 application routes.
+My main project is **EsotericaOS**, a production web platform that connects personal knowledge, structured records, AI guidance, recurring workflows, community tools, and subscription features in one system.
 
-I work across product discovery, task decomposition, AI-assisted implementation, testing, deployment, infrastructure, UX review, and continuous product development.
+## What I do
 
-## Current focus
+- turn product ideas into working web applications;
+- decompose complex features into clear implementation tasks;
+- design prompts, context, memory, and tool workflows for LLM-powered features;
+- review, test, and improve AI-generated code;
+- iterate on UX based on real product behavior;
+- deploy and operate production services on Linux infrastructure.
 
-- AI-assisted product development
-- LLM workflows and agent behavior
-- Prompt and context design
-- Rapid prototyping
-- Product operations
-- Manual QA and AI output evaluation
-- Web application deployment and administration
-
-## Selected work
+## Featured project
 
 ### EsotericaOS
 
-A production web platform for organizing personal practice, knowledge, observations, and recurring workflows.
+A production platform developed over 4–5 months with more than 40 application routes and a GitHub history of over 220 pull requests.
 
-My responsibilities include:
+Selected systems include:
 
-- product concept and feature design;
-- decomposition of complex features into executable tasks;
-- development through Claude, ChatGPT, Gemini, Codex, and other AI tools;
-- review and testing of generated code;
-- UX and interface iteration;
-- deployment and server administration;
-- AI assistant behavior, context, memory, and tool workflows;
-- product documentation and roadmap development.
+- Umbra, an AI guide with RAG, memory, tool calling, and several autonomy levels;
+- personal knowledge graphs and structured relations;
+- ritual, journal, goal, task, and outcome-tracking workflows;
+- astrology, numerology, divination, and symbolic reference systems;
+- 3D altars and interactive visual experiences;
+- Free/PRO limits, payments, marketplace, community, and public content pages;
+- automated tests, migrations, SEO, notifications, and production operations.
 
-**Live product:** https://esoterica-os.ru
+**Live product:** https://esoterica-os.ru  
+**Public case study:** https://github.com/chthonicdragon/esoterica-os-showcase
 
-The main source repository is private because it contains commercial code and internal product logic.
+The production source repository is private because it contains commercial code, infrastructure configuration, and internal product logic.
+
+## Other work
 
 ### Esoterica Astro Engine
 
-An open-core astrology calculation service built with Python, FastAPI, Kerykeion, and Swiss Ephemeris.
+Open-source astrology calculation API built with Python, FastAPI, Kerykeion, and Swiss Ephemeris.
 
-It calculates natal planets, houses, major aspects, and transit events through a structured API.
-
-Repository: https://github.com/chthonicdragon/esoterica-astro-engine
+https://github.com/chthonicdragon/esoterica-astro-engine
 
 ### Personal AI workflows
 
-I use and configure AI assistants for research, product planning, development, documentation, quality review, and recurring operational tasks.
+I build and configure personal AI assistants for research, planning, documentation, development, quality review, and recurring operations, including Hermes-based workflows and multi-model setups.
 
-These include personal Hermes-based assistants and custom workflows built around several LLM providers.
+## Stack
 
-## Tools and technologies
-
-**AI:** Claude, ChatGPT, Gemini, Codex, prompt design, context engineering, AI output evaluation
-
-**Product:** feature discovery, task decomposition, UX review, documentation, roadmap planning
-
-**Web:** React, TypeScript, Vite, Supabase, REST APIs, PWA
-
-**Infrastructure:** GitHub, Linux, VPS administration, deployment, environment configuration
-
-**Development approach:** AI-assisted development, manual review, testing, iterative delivery
+**AI:** Claude, ChatGPT, Gemini, Codex, prompt design, context engineering, RAG, tool workflows, AI output evaluation  
+**Web:** React, TypeScript, Vite, Express, Supabase, PostgreSQL, REST APIs, PWA  
+**UI:** Tailwind CSS, shadcn/ui, Framer Motion, Three.js / React Three Fiber  
+**Infrastructure:** GitHub, Linux, VPS, Docker, systemd, Vercel, self-hosted services
 
 ## Open to work
 
-I am open to remote roles and project work in:
+Open to remote roles and project work in:
 
-- AI product operations;
-- AI prototyping;
+- AI product and product operations;
+- AI prototyping and agent workflows;
 - LLM evaluation and quality;
-- AI training;
 - prompt and context design;
-- junior product or technical roles involving AI tools.
+- junior product engineering roles with a strong AI focus.
 
-Currently based in Voronezh, Russia, and planning to work internationally.
+Based in Voronezh and open to international remote work.
 
 ## Contact
 
