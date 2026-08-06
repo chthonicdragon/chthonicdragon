@@ -37,8 +37,8 @@ export const featuredProject = {
     },
   ],
   screenshots: [
-    { id: 'oracle', label: 'Daily Oracle & Umbra guide' },
-    { id: 'grimoire', label: 'Grimoire knowledge library' },
+    { id: 'graph', label: 'Personal knowledge graph' },
+    { id: 'umbra', label: 'Umbra, the AI guide' },
     { id: 'tarot', label: 'Tarot reading interface' },
   ],
 } as const
