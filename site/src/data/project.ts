@@ -2,10 +2,10 @@ export const featuredProject = {
   name: 'EsotericaOS',
   description:
     'A production web platform that connects personal knowledge, structured records, AI guidance, recurring workflows, community tools, and subscription features in one system.',
-  meta: 'Developed over 4–5 months · 40+ application routes · 220+ merged pull requests',
+  meta: 'Developed over 4-5 months · 40+ application routes · 220+ merged pull requests',
   liveUrl: 'https://esoterica-os.ru',
   showcaseUrl: 'https://github.com/chthonicdragon/esoterica-os-showcase',
-  note: 'The production source is private — it contains commercial code, infrastructure configuration, and internal product logic. The showcase repository documents the architecture publicly.',
+  note: 'The production source is private: it contains commercial code, infrastructure configuration, and internal product logic. The showcase repository documents the architecture publicly.',
   features: [
     {
       title: 'Umbra, the AI guide',

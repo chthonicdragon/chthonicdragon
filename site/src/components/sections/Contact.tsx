@@ -21,7 +21,7 @@ export function Contact() {
             Open to remote AI product engineering roles.
           </h2>
           <p className="mt-4 text-balance text-base leading-relaxed text-fg-muted">
-            Based in {site.location}. Reach out directly — I read everything myself.
+            Based in {site.location}. Reach out directly: I read everything myself.
           </p>
         </Reveal>
 
