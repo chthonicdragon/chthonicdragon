@@ -3,7 +3,7 @@ import { Reveal } from '@/components/ui/Reveal'
 import { cn } from '@/lib/utils'
 
 interface SectionHeaderProps {
-  eyebrow: string
+  eyebrow?: string
   title: ReactNode
   description?: ReactNode
   align?: 'left' | 'center'
@@ -19,8 +19,8 @@ export function SectionHeader({ eyebrow, title, description, align = 'left', cla
         className,
       )}
     >
-      <span className="text-sm font-medium tracking-wide text-accent">{eyebrow}</span>
-      <h2 className="mt-3 text-balance text-3xl font-semibold tracking-tight text-fg sm:text-4xl">{title}</h2>
+      {eyebrow ? <span className="text-sm font-medium tracking-wide text-accent">{eyebrow}</span> : null}
+      <h2 className={cn('text-balance text-3xl font-semibold tracking-tight text-fg sm:text-4xl', eyebrow ? 'mt-3' : '')}>{title}</h2>
       {description ? (
         <p className="mt-4 text-balance text-base leading-relaxed text-fg-muted">{description}</p>
       ) : null}

@@ -9,7 +9,7 @@ const ease = [0.16, 1, 0.3, 1] as const
 export function Hero() {
   return (
     <section id="top" className="relative overflow-hidden border-b border-border">
-      <div aria-hidden className="pointer-events-none absolute inset-0 bg-grid bg-radial-fade" />
+      <div aria-hidden className="pointer-events-none absolute inset-0 bg-radial-fade" />
       <Container className="relative flex min-h-[88vh] flex-col justify-center pt-16 pb-16">
         <motion.p
           initial={{ opacity: 0, y: 10 }}

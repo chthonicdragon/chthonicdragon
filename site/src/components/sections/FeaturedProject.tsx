@@ -43,7 +43,7 @@ export function FeaturedProject() {
           <BrowserFrame
             src={`/screenshots/${featuredProject.screenshots[1].id}.png`}
             label={featuredProject.screenshots[1].label}
-            url="esoterica-os.ru/grimoire"
+            url="esoterica-os.ru"
           />
           <BrowserFrame
             src={`/screenshots/${featuredProject.screenshots[2].id}.png`}

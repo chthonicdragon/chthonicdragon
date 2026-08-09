@@ -15,7 +15,7 @@ export const otherProjects: OtherProject[] = [
   {
     name: 'Personal AI workflows',
     description:
-      'Configured personal AI assistants for research, planning, documentation, development, quality review, and recurring operations — including Hermes-based workflows and multi-model setups.',
+      'Configured personal AI assistants for research, planning, documentation, development, quality review, and recurring operations, including Hermes-based workflows and multi-model setups.',
     tags: ['Agents', 'Multi-model', 'Automation'],
     url: 'https://github.com/chthonicdragon',
   },

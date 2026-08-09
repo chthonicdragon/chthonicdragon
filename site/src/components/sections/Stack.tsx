@@ -9,7 +9,7 @@ export function Stack() {
   return (
     <Section id="stack">
       <Container>
-        <SectionHeader eyebrow="Building with" title="The tools behind the process" />
+        <SectionHeader title="The tools behind the process" />
         <div className="mt-14 grid gap-8 sm:grid-cols-2">
           {stack.map((group, i) => (
             <Reveal key={group.label} delay={i * 0.06}>

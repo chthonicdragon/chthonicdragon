@@ -7,7 +7,7 @@ export const principles: Principle[] = [
   {
     title: 'Context over cleverness',
     description:
-      'Every AI-assisted task starts with written intent, decomposition, and explicit confidence levels — not a clever prompt and hope.',
+      'Every AI-assisted task starts with written intent, decomposition, and explicit confidence levels, not a clever prompt and hope.',
   },
   {
     title: 'Match effort to risk',

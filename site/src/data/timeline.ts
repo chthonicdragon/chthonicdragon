@@ -21,7 +21,7 @@ export const timeline: TimelineStage[] = [
     stage: 'Production hardening',
     title: 'Built to run without supervision',
     description:
-      'Payments, subscription limits, a marketplace, automated tests, idempotent migrations, SEO, and monitoring — the parts that matter after launch.',
+      'Payments, subscription limits, a marketplace, automated tests, idempotent migrations, SEO, and monitoring: the parts that matter after launch.',
   },
   {
     stage: 'Now',

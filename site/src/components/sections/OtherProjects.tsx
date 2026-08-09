@@ -10,7 +10,7 @@ export function OtherProjects() {
   return (
     <Section id="other-projects">
       <Container>
-        <SectionHeader eyebrow="Other work" title="Beyond the flagship product" />
+        <SectionHeader title="Beyond the flagship product" />
         <div className="mt-14 grid gap-6 sm:grid-cols-2">
           {otherProjects.map((project, i) => (
             <Reveal key={project.name} delay={i * 0.08}>
