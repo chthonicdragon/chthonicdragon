@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { Container } from '@/components/ui/Container'
 import { LinkButton } from '@/components/ui/Button'
+import { UmbraSpirit } from '@/components/effects/UmbraSpirit'
 import { site } from '@/data/site'
 
 const ease = [0.16, 1, 0.3, 1] as const
@@ -9,7 +10,10 @@ export function Hero() {
   return (
     <section id="top" className="relative overflow-hidden border-b border-border">
       <div aria-hidden className="pointer-events-none absolute inset-0 bg-radial-fade" />
-      <Container className="relative flex min-h-[88vh] flex-col justify-center pt-16 pb-16">
+      <div aria-hidden className="pointer-events-none absolute -right-16 top-1/2 z-0 hidden w-[360px] -translate-y-1/2 opacity-40 lg:block lg:right-[max(1rem,calc((100vw-72rem)/2))] lg:w-[460px] lg:opacity-100">
+        <UmbraSpirit className="mix-blend-screen [mask-image:linear-gradient(to_bottom,transparent,#000_16%,#000_84%,transparent)]" />
+      </div>
+      <Container className="relative z-10 flex min-h-[88vh] flex-col justify-center pt-16 pb-16">
         <motion.p
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}

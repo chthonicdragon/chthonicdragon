@@ -26,7 +26,7 @@ Order by value, each item keeps a static fallback and loads lazily.
 
 1. **Real product demos (highest value).** For EsotericaOS: 3 to 4 owner-approved captures (graph, Umbra chat, journal) and one 10 to 15 s muted loop, served as `<video preload="none" poster>` or WebP. For Rejuv: a real `InterventionEpisode` JSON next to its validated model and the failing-then-passing test output, as an interactive code panel rather than prose. Blocked on owner-supplied captures and permission.
 2. **Merge About, How I Build, and Principles** into one scroll sequence: a five-step pipeline diagram (Define, Plan, Build, Verify, Ship) that reveals one sentence per step, replacing three text blocks. Expected saving: about 3 screens.
-3. **Hero scene.** Place a reduced Umbra (or the graph, focused) in the empty right half. Reuse the existing canvas, no new dependency.
+3. **Hero scene (done).** Umbra now sits in the right half of the hero from 1024 px up (hidden below, where it would sit under the text). Same component as the EsotericaOS case, so no new dependency.
 4. **Case studies as tabs or a compact summary plus expandable detail**, so a visitor sees the headline, status, and one visual first, and opens decisions on demand.
 5. **Research section**: one quiet full-bleed visual (the graph densifying toward a topic) instead of a second text column.
 6. **Genesis / Build / Esoterica scenes** (from the earlier brief) only after items 1 to 3. Budget: one canvas or one WebGL scene active at a time, 60 fps target on a mid laptop, under 150 KB of added JS gzip, no autoplay video with sound, lazy-init on intersection, and no scene on `prefers-reduced-motion` or `Save-Data`.
