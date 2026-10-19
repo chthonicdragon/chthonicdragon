@@ -8,6 +8,7 @@ import { drawEyes, type RGB } from '@/lib/umbraEyes'
 const BODY: RGB = [75, 18, 145]
 const EYE: RGB = [255, 205, 90]
 const GLYPH: RGB = [200, 105, 255]
+const ORBIT: RGB = [115, 38, 205]
 const EYE_SPEED = 0.8
 const EYE_SQUINT = 0.92
 const LOOK_RANGE = 0.1
@@ -29,10 +30,12 @@ const RUNES = 'ᛟᛞᚾᛗᛚᛇᛈᛉᛋᛏᛒᛖᚦᚱᚨ'
 const SYMBOLS = '☉☽☿♀♂♃♄♅♆⚚'
 const EYE_GLYPHS = '◎◉◐◑⊚'
 const RAIN_GLYPHS = '01☉☽☿♄/\\-+=#%'
+const CODE = '1100/\\[]{}##@@0101'
 const BINARY = '01010110011010010100101100110101'
 
 const T_BODY = 0
 const T_EYE = 1
+const T_ORBIT = 2
 const T_GLYPH = 3
 const T_RAIN = 4
 const S_FALL = 0
@@ -52,6 +55,7 @@ export interface Scene {
   N: number
   nBody: number
   nEye: number
+  nOrbit: number
   nGlyph: number
   px: Float32Array
   py: Float32Array
@@ -66,6 +70,7 @@ export interface Scene {
   density: Float32Array
   sAngle: Float32Array
   sRadius: Float32Array
+  oAngle: Float32Array
   eox: Float32Array
   eoy: Float32Array
   state: Uint8Array
@@ -128,6 +133,9 @@ function initRain(s: Scene, i: number, visible = false) {
   } else if (ty === T_EYE) {
     s.chars[i] = Math.random() < 0.28 ? pick(EYE_GLYPHS) : null
     s.size[i] = 2.2 + Math.random() * 2.5
+  } else if (ty === T_ORBIT) {
+    s.chars[i] = Math.random() < 0.22 ? pick(CODE) : null
+    s.size[i] = 1.6 + Math.random() * 2.2
   } else if (ty === T_RAIN) {
     s.chars[i] = pick(RAIN_GLYPHS)
     s.size[i] = 7 + Math.random() * 5
@@ -136,7 +144,7 @@ function initRain(s: Scene, i: number, visible = false) {
     s.chars[i] = bin ? pick(BINARY) : Math.random() < 0.035 ? pick(RUNES) : null
     s.size[i] = bin ? 3 + Math.random() * 1.8 : 1.4 + Math.random() * 2
   }
-  const col: RGB = ty === T_EYE ? EYE : ty === T_GLYPH ? GLYPH : BODY
+  const col: RGB = ty === T_EYE ? EYE : ty === T_ORBIT ? ORBIT : ty === T_GLYPH ? GLYPH : BODY
   s.r[i] = col[0]
   s.g[i] = col[1]
   s.b[i] = col[2]
@@ -148,14 +156,15 @@ export function createScene(W: number, H: number, quality = 1): Scene {
   const d = quality
   const nBody = Math.round(900 * d)
   const nEye = Math.round(220 * d)
+  const nOrbit = Math.round(180 * d)
   const nGlyph = Math.round(90 * d)
   const nRain = Math.round(140 * d)
-  const N = nBody + nEye + nGlyph + nRain
+  const N = nBody + nEye + nOrbit + nGlyph + nRain
   const f = (n: number) => new Float32Array(n)
   const s: Scene = {
-    W, H, CX: W / 2, CY: H / 2, R, N, nBody, nEye, nGlyph,
+    W, H, CX: W / 2, CY: H / 2, R, N, nBody, nEye, nOrbit, nGlyph,
     px: f(N), py: f(N), vx: f(N), vy: f(N), hx: f(N), hy: f(N), phase: f(N), speed: f(N), alpha: f(N), size: f(N),
-    density: f(N), sAngle: f(N), sRadius: f(N), eox: f(N), eoy: f(N),
+    density: f(N), sAngle: f(N), sRadius: f(N), oAngle: f(N), eox: f(N), eoy: f(N),
     state: new Uint8Array(N), type: new Uint8Array(N), chars: new Array<string | null>(N).fill(null),
     r: f(N), g: f(N), b: f(N),
     t: 0, settledFrac: 0,
@@ -164,7 +173,10 @@ export function createScene(W: number, H: number, quality = 1): Scene {
     eyePulse: 1, cooldown: 0, nextFlushAt: 6, flushFrames: 0,
   }
   const iEye = nBody
-  const iGlyph = iEye + nEye
+  const CX0 = s.CX
+  const CY0 = s.CY
+  const iOrbit = iEye + nEye
+  const iGlyph = iOrbit + nOrbit
   const iRain = iGlyph + nGlyph
   const le = leftEye(s)
   const re = rightEye(s)
@@ -186,6 +198,16 @@ export function createScene(W: number, H: number, quality = 1): Scene {
     s.hy[k] = target.y + s.eoy[k]
     s.density[k] = 1
     s.type[k] = T_EYE
+  }
+  for (let i = 0; i < nOrbit; i++) {
+    const k = iOrbit + i
+    const a = (i / nOrbit) * Math.PI * 2
+    const rad = R * (1.06 + Math.sin(a * 3) * 0.16 + Math.sin(a * 5 + 1) * 0.1 + Math.random() * 0.18)
+    s.oAngle[k] = a
+    s.hx[k] = CX0 + Math.cos(a) * rad * 0.9
+    s.hy[k] = CY0 + Math.sin(a) * rad
+    s.density[k] = 0.72
+    s.type[k] = T_ORBIT
   }
   for (let i = 0; i < nGlyph; i++) {
     const p = sampleBody(s)
@@ -302,6 +324,12 @@ export function step(s: Scene, input: Input) {
       s.g[i] = EYE[1] * k
       s.b[i] = EYE[2] * k
     }
+    if (type[i] === T_ORBIT) {
+      s.oAngle[i] += 0.00085 * EYE_SPEED
+      const rad = R * (1.06 + Math.sin(s.oAngle[i] * 3) * 0.16 + Math.sin(s.oAngle[i] * 5 + 1) * 0.1)
+      hx[i] = CX + Math.cos(s.oAngle[i]) * rad * 0.9
+      hy[i] = CY + Math.sin(s.oAngle[i]) * rad
+    }
     if (type[i] === T_RAIN && state[i] === S_SETTLED) {
       hy[i] -= 0.1
       if (hy[i] < CY - R * 2) hy[i] = CY + R * 0.95
@@ -356,7 +384,7 @@ export function step(s: Scene, input: Input) {
       vy[i] *= damping
       px[i] += vx[i]
       py[i] += vy[i]
-      const wobble = (type[i] === T_GLYPH ? 1.2 : type[i] === T_EYE ? 0.5 : 1.42) * (soft ? 0.92 + (1 - density[i]) * 0.22 : 1)
+      const wobble = (type[i] === T_ORBIT ? 2.35 : type[i] === T_GLYPH ? 1.2 : type[i] === T_EYE ? 0.5 : 1.42) * (soft ? 0.92 + (1 - density[i]) * 0.22 : 1)
       px[i] += Math.sin(phase[i]) * wobble * 0.13
       py[i] += Math.cos(phase[i] * 0.72) * wobble * 0.13
       const settledAlpha = 0.55 + 0.45 * Math.sin(phase[i] * 1.4 + i * 0.01)
@@ -415,8 +443,8 @@ export function draw(ctx: CanvasRenderingContext2D, s: Scene, fade = true) {
   let lastPx = -1
   for (let i = 0; i < N; i++) {
     const ty = type[i]
-    const softness = ty === T_BODY || ty === T_GLYPH ? 0.62 + density[i] * 0.38 : 1
-    const stateAlpha = state[i] === S_FALL ? 0.34 : state[i] === S_SPIRAL ? 0.66 : ty === T_RAIN ? 0.48 : 0.82
+    const softness = ty === T_BODY || ty === T_GLYPH ? 0.62 + density[i] * 0.38 : ty === T_ORBIT ? density[i] : 1
+    const stateAlpha = state[i] === S_FALL ? 0.34 : state[i] === S_SPIRAL ? 0.66 : ty === T_RAIN ? 0.48 : ty === T_ORBIT ? 0.58 : 0.82
     const a = Math.min(1, alpha[i] * stateAlpha * softness)
     if (a < 0.012) continue
     ctx.fillStyle = `rgba(${Math.round(s.r[i])},${Math.round(s.g[i])},${Math.round(s.b[i])},${ty === T_EYE ? a * s.eyePulse : a})`
