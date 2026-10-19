@@ -23,7 +23,7 @@ function Case({ study }: { study: CaseStudy }) {
   return (
     <article id={study.id} aria-labelledby={`${study.id}-title`} className="scroll-mt-24">
       <div className={study.id === 'esoterica-os' ? 'grid items-center gap-10 lg:grid-cols-[1.1fr_0.9fr]' : undefined}>
-      <Reveal className="max-w-2xl">
+      <Reveal className="relative z-10 max-w-2xl">
         <span className="text-sm font-medium tracking-wide text-accent">{study.eyebrow}</span>
         <h3 id={`${study.id}-title`} className="mt-3 text-balance text-3xl font-semibold tracking-tight text-fg sm:text-4xl">
           {study.name}
@@ -44,14 +44,14 @@ function Case({ study }: { study: CaseStudy }) {
             </LinkButton>
           ))}
         </div>
+        {study.id === 'esoterica-os' ? (
+          <p className="mt-6 text-xs text-fg-subtle">On the right: Umbra, the AI guide, drawn as code condensing into a figure. A stylised rendering, not a product screenshot.</p>
+        ) : null}
       </Reveal>
       {study.id === 'esoterica-os' ? (
-        <Reveal delay={0.1} className="relative mx-auto w-full max-w-[420px]">
-          <UmbraSpirit />
-          <p className="mt-2 text-center text-xs text-fg-subtle">
-            Umbra, the AI guide, condensing out of falling code. A stylised rendering, not a product screenshot.
-          </p>
-        </Reveal>
+        <div className="pointer-events-none relative z-0 mx-auto aspect-square w-full max-w-[420px]" aria-hidden="true">
+          <UmbraSpirit className="absolute left-1/2 top-1/2 w-[190%] -translate-x-1/2 -translate-y-1/2 mix-blend-screen [mask-image:radial-gradient(closest-side,#000_52%,transparent_100%)]" />
+        </div>
       ) : null}
       </div>
 

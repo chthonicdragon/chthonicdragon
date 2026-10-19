@@ -26,7 +26,7 @@ export function UmbraSpirit({ className }: { className?: string }) {
 
     function build() {
       size = Math.max(200, Math.round(wrap!.clientWidth))
-      const dpr = Math.min(window.devicePixelRatio || 1, coarse ? 1.25 : 1.6)
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.25)
       canvas.width = size * dpr
       canvas.height = size * dpr
       canvas.style.width = `${size}px`
@@ -67,7 +67,7 @@ export function UmbraSpirit({ className }: { className?: string }) {
       const { x, y } = local(e)
       input.x = x
       input.y = y
-      input.hovered = x >= 0 && y >= 0 && x <= size && y <= size
+      input.hovered = !!scene && Math.hypot(x - scene.cx, y - scene.cy) < scene.radius * 1.3
     }
     const onLeaveDoc = () => {
       input.x = null
@@ -76,7 +76,7 @@ export function UmbraSpirit({ className }: { className?: string }) {
     }
     const onDown = (e: PointerEvent) => {
       const { x, y } = local(e)
-      if (scene && x >= 0 && y >= 0 && x <= size && y <= size) scatter(scene, x, y)
+      if (scene && Math.hypot(x - scene.cx, y - scene.cy) < scene.radius * 1.3) scatter(scene, x, y)
     }
     const onVisibility = () => (document.hidden ? stop() : visible && start())
 

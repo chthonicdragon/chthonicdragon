@@ -24,7 +24,7 @@ function App() {
       </a>
       <KnowledgeGraphBackground />
       <Header />
-      <main id="main">
+      <main id="main" className="overflow-x-clip">
         <Hero />
         <About />
         <HowIBuild />

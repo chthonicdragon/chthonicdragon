@@ -3,7 +3,7 @@
  * Condensed port of the EsotericaOS Umbra canvas (idle palette), kept free of React.
  */
 export type RGB = [number, number, number]
-type Role = 'body' | 'eye' | 'orbit' | 'glyph' | 'rain'
+type Role = 'body' | 'glyph' | 'rain'
 type State = 'rain' | 'spiral' | 'settled' | 'scatter'
 
 export interface Particle {
@@ -15,10 +15,6 @@ export interface Particle {
   vy: number
   homeX: number
   homeY: number
-  baseX: number
-  baseY: number
-  localX: number
-  localY: number
   size: number
   alpha: number
   baseAlpha: number
@@ -27,19 +23,9 @@ export interface Particle {
   speed: number
   spiralAngle: number
   spiralRadius: number
-  orbitAngle: number
-  orbitRadius: number
   driftMinY: number
   driftMaxY: number
   bias: number
-}
-
-interface Ripple {
-  x: number
-  y: number
-  radius: number
-  alpha: number
-  speed: number
 }
 
 export interface Scene {
@@ -49,12 +35,19 @@ export interface Scene {
   radius: number
   matrixCell: number
   particles: Particle[]
-  ripples: Ripple[]
+  eyes: EyeState[]
   gaze: { x: number; y: number; tx: number; ty: number; timer: number }
   time: number
-  lastPulse: number
   settleRatio: number
   scatterCooldown: number
+}
+
+interface EyeState {
+  open: number
+  blinking: boolean
+  blinkT: number
+  blinkDur: number
+  nextBlink: number
 }
 
 export interface Input {
@@ -64,25 +57,27 @@ export interface Input {
 }
 
 const PALETTE = {
-  iris: [255, 216, 128] as RGB,
-  irisOuter: [236, 68, 40] as RGB,
   body: [92, 62, 152] as RGB,
   accent: [190, 126, 255] as RGB,
   code: [130, 218, 255] as RGB,
   rain: [92, 188, 228] as RGB,
-  corona: [122, 84, 212] as RGB,
 }
+// Eye palette from the production UmbraEyesCanvas (idle look).
+const SCLERA: RGB = [12, 6, 22]
+const IRIS: RGB = [210, 145, 40]
+const GLOW: RGB = [255, 170, 50]
+const PUPIL: RGB = [4, 0, 12]
+const SPEC: RGB = [255, 235, 195]
 const AGITATION = 0.54
-const PULSE_SPEED = 2.08
 const SENSITIVITY = 0.82
 
 const BODY_GLYPHS = Array.from('ᚠᚢᚦᚨᚱᚲᚷᚹᚾᛁᛃᛇᛏᛒᛖᛗᛚᛟ⊗△☽⊕01|/\\-_+#@%')
-const EYE_GLYPHS = Array.from('⊗◈●✦◆')
 const RAIN_GLYPHS = Array.from('01ᚠᚢᚦᚨᚱᚲ/|\\-+#%')
 
 const RADIUS_RATIO = 0.25
 const EYE_OFFSET = 0.29
 const EYE_Y = -0.21
+const EYE_HALF_W = 0.24 // almond half-width, in units of radius
 const CAPTURE_RATIO = 2.22
 
 const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v))
@@ -111,11 +106,11 @@ export function sampleSpiritPoint(cx: number, cy: number, radius: number) {
 
 function makeParticle(role: Role, homeX: number, homeY: number, size: number, glyph: string | null): Particle {
   return {
-    role, state: 'rain', x: 0, y: 0, vx: 0, vy: 0, homeX, homeY, baseX: homeX, baseY: homeY, localX: 0, localY: 0,
+    role, state: 'rain', x: 0, y: 0, vx: 0, vy: 0, homeX, homeY,
     size, alpha: rand(0.18, 0.7),
-    baseAlpha: rand(role === 'eye' ? 0.5 : 0.26, role === 'eye' ? 0.96 : role === 'glyph' ? 0.92 : 0.82),
+    baseAlpha: rand(0.26, role === 'glyph' ? 0.92 : 0.82),
     glyph, phase: rand(0, Math.PI * 2), speed: rand(0.75, 2.2), spiralAngle: 0, spiralRadius: 0,
-    orbitAngle: 0, orbitRadius: 0, driftMinY: homeY, driftMaxY: homeY, bias: rand(-1, 1),
+    driftMinY: homeY, driftMaxY: homeY, bias: rand(-1, 1),
   }
 }
 
@@ -142,8 +137,6 @@ function respawn(s: Scene, p: Particle, immediate = false) {
   p.spiralAngle = Math.atan2(p.y - (cy - radius * 0.08), p.x - cx)
   p.spiralRadius = Math.hypot(p.x - cx, p.y - (cy - radius * 0.08))
   if (p.role === 'glyph') p.glyph = pick(BODY_GLYPHS)
-  else if (p.role === 'eye') p.glyph = Math.random() < 0.28 ? pick(EYE_GLYPHS) : null
-  else if (p.role === 'orbit') p.glyph = Math.random() < 0.24 ? pick(BODY_GLYPHS) : null
   else if (p.role === 'rain') p.glyph = pick(RAIN_GLYPHS)
   else p.glyph = Math.random() < 0.06 ? pick(BODY_GLYPHS) : null
 }
@@ -153,10 +146,11 @@ export function createScene(size: number, quality: number): Scene {
   const radius = size * RADIUS_RATIO
   const s: Scene = {
     size, cx: size / 2, cy: size / 2 + size * 0.018, radius, matrixCell: Math.max(11, Math.round(size * 0.076)),
-    particles: [], ripples: [], gaze: { x: 0, y: 0, tx: 0, ty: 0, timer: rand(0.9, 2.8) },
-    time: 0, lastPulse: 0, settleRatio: 0, scatterCooldown: 0,
+    particles: [], eyes: [0, 1].map((i) => ({ open: 1, blinking: false, blinkT: 0, blinkDur: 0.13, nextBlink: rand(2 + i * 0.8, 4.5 + i) })), gaze: { x: 0, y: 0, tx: 0, ty: 0, timer: rand(0.9, 2.8) },
+    time: 0, settleRatio: 0, scatterCooldown: 0,
   }
-  const n = (base: number, min: number) => Math.max(min, Math.round(base * quality))
+  const density = quality * clamp(size / 420, 1, 2)
+  const n = (base: number, min: number) => Math.max(min, Math.round(base * density))
   const { cx, cy } = s
   const add = (p: Particle) => { respawn(s, p, true); s.particles.push(p) }
 
@@ -170,35 +164,6 @@ export function createScene(size: number, quality: number): Scene {
     p.baseAlpha = rand(0.44, 0.92)
     add(p)
   }
-  const orbitCount = n(52, 12)
-  for (let i = 0; i < orbitCount; i++) {
-    const a = (i / orbitCount) * Math.PI * 2
-    const r = radius * (1.08 + Math.sin(a * 3) * 0.18 + Math.sin(a * 5 + 0.6) * 0.1 + rand(0, 0.18))
-    const p = makeParticle('orbit', cx + Math.cos(a) * r * 0.88, cy - radius * 0.04 + Math.sin(a) * r, rand(1.25, 1.9), Math.random() < 0.28 ? pick(BODY_GLYPHS) : null)
-    p.orbitAngle = a
-    p.orbitRadius = r
-    p.baseAlpha = rand(0.24, 0.68)
-    add(p)
-  }
-  const eyeBases = [
-    { x: cx - radius * EYE_OFFSET, y: cy + radius * EYE_Y },
-    { x: cx + radius * EYE_OFFSET, y: cy + radius * EYE_Y },
-  ]
-  for (let i = 0; i < n(28, 12); i++) {
-    const a = rand(0, Math.PI * 2)
-    const er = rand(0, radius * 0.115)
-    const lx = Math.cos(a) * er
-    const ly = Math.sin(a) * er * 0.66
-    for (const base of eyeBases) {
-      const p = makeParticle('eye', base.x + lx, base.y + ly, rand(1.5, 2.15), Math.random() < 0.34 ? pick(EYE_GLYPHS) : null)
-      p.baseX = base.x
-      p.baseY = base.y
-      p.localX = lx
-      p.localY = ly
-      p.baseAlpha = rand(0.54, 0.96)
-      add(p)
-    }
-  }
   for (let i = 0; i < n(48, 10); i++) {
     const p = makeParticle('rain', rand(cx - radius * 0.56, cx + radius * 0.56), rand(cy - radius * 0.44, cy + radius * 0.5), rand(1.5, 2.25), pick(RAIN_GLYPHS))
     p.driftMinY = cy - radius * 1.72
@@ -211,11 +176,7 @@ export function createScene(size: number, quality: number): Scene {
 
 function eyeCenters(s: Scene) {
   const { cx, cy, radius, gaze } = s
-  return [-1, 1].map((side) => ({ x: cx + side * radius * EYE_OFFSET + gaze.x, y: cy + radius * EYE_Y + gaze.y * 0.72 }))
-}
-
-function pushRipple(s: Scene, x: number, y: number, strength: number) {
-  s.ripples.push({ x, y, radius: Math.max(2, s.radius * 0.03), alpha: 0.48 + strength * 0.26, speed: 82 + strength * 44 })
+  return [-1, 1].map((side) => ({ x: cx + side * radius * EYE_OFFSET, y: cy + radius * EYE_Y, gx: gaze.x, gy: gaze.y * 0.72 }))
 }
 
 /** Scatter the settled particles away from a point; they re-condense out of the rain. */
@@ -233,9 +194,6 @@ export function scatter(s: Scene, ox: number, oy: number) {
     p.vx = Math.cos(ang) * speed
     p.vy = Math.sin(ang) * speed
   }
-  const eyes = eyeCenters(s)
-  eyes.forEach((e) => pushRipple(s, e.x, e.y, 1))
-  pushRipple(s, s.cx, s.cy, 0.72)
 }
 
 export function step(s: Scene, dt: number, input: Input) {
@@ -265,26 +223,28 @@ export function step(s: Scene, dt: number, input: Input) {
   }
   gaze.x = lerp(gaze.x, gaze.tx, 0.08 * fs)
   gaze.y = lerp(gaze.y, gaze.ty, 0.08 * fs)
-  const eyes = eyeCenters(s)
-  if (s.time - s.lastPulse > 3.8 + Math.random() * 2.1) {
-    s.lastPulse = s.time
-    eyes.forEach((e) => pushRipple(s, e.x, e.y, 0.92))
+  for (const [i, b] of s.eyes.entries()) {
+    b.nextBlink -= dt
+    if (!b.blinking && b.nextBlink <= 0) {
+      b.blinking = true
+      b.blinkT = 0
+      b.blinkDur = rand(0.1, 0.2)
+      b.nextBlink = rand(2.4, 5.8)
+      if (i === 0 && Math.random() < 0.4) s.eyes[1].nextBlink = rand(0.02, 0.1)
+    }
+    if (b.blinking) {
+      b.blinkT += dt
+      const t = b.blinkT / b.blinkDur
+      b.open = t < 0.4 ? lerp(1, 0, t / 0.4) : lerp(0, 1, (t - 0.4) / 0.6)
+      if (b.blinkT >= b.blinkDur) { b.blinking = false; b.open = 1 }
+    }
   }
 
   let settled = 0
   for (const p of s.particles) {
     p.phase += dt * p.speed * (p.role === 'rain' ? 1.8 : 1.3 + AGITATION * 0.55)
 
-    if (p.role === 'orbit') {
-      p.orbitAngle += dt * (0.36 + AGITATION * 0.22) * (p.bias >= 0 ? 1 : -1)
-      const r = p.orbitRadius * (1 + Math.sin(p.orbitAngle * 3 + p.bias) * 0.03)
-      p.homeX = cx + Math.cos(p.orbitAngle) * r * 0.88
-      p.homeY = cy - radius * 0.04 + Math.sin(p.orbitAngle) * r
-    } else if (p.role === 'eye') {
-      const anchor = p.baseX < cx ? eyes[0] : eyes[1]
-      p.homeX = anchor.x + p.localX
-      p.homeY = anchor.y + p.localY
-    } else if (p.role === 'rain' && p.state === 'settled') {
+    if (p.role === 'rain' && p.state === 'settled') {
       p.homeY -= dt * radius * (0.32 + AGITATION * 0.1)
       if (p.homeY < p.driftMinY) {
         p.homeY = p.driftMaxY
@@ -349,10 +309,10 @@ export function step(s: Scene, dt: number, input: Input) {
       p.vy *= Math.pow(0.81, fs)
       p.x += p.vx * fs
       p.y += p.vy * fs
-      const wobble = p.role === 'orbit' ? 2.8 : p.role === 'glyph' ? 1.2 : p.role === 'eye' ? 0.48 : p.role === 'rain' ? 0.9 : 1.4
+      const wobble = p.role === 'glyph' ? 1.2 : p.role === 'rain' ? 0.9 : 1.4
       p.x += Math.sin(p.phase + p.bias) * wobble * 0.14
       p.y += Math.cos(p.phase * 0.74 + p.bias) * wobble * 0.14
-      p.alpha = clamp(p.baseAlpha + Math.sin(p.phase * 1.35 + p.bias) * 0.22, p.role === 'eye' ? 0.38 : 0.14, 1)
+      p.alpha = clamp(p.baseAlpha + Math.sin(p.phase * 1.35 + p.bias) * 0.22, 0.14, 1)
       continue
     }
 
@@ -366,12 +326,6 @@ export function step(s: Scene, dt: number, input: Input) {
   }
   s.settleRatio = settled / s.particles.length
 
-  for (let i = s.ripples.length - 1; i >= 0; i--) {
-    const r = s.ripples[i]
-    r.radius += r.speed * dt
-    r.alpha *= Math.max(0.34, 1 - dt * 2.6)
-    if (r.alpha < 0.02) s.ripples.splice(i, 1)
-  }
 }
 
 function mark(ctx: CanvasRenderingContext2D, p: Particle, color: string) {
@@ -401,33 +355,103 @@ function trail(ctx: CanvasRenderingContext2D, s: Scene, p: Particle, color: RGB,
   ctx.stroke()
 }
 
+function eyePath(ctx: CanvasRenderingContext2D, cx: number, cy: number, ew: number, eh: number) {
+  ctx.beginPath()
+  ctx.moveTo(cx - ew, cy)
+  ctx.bezierCurveTo(cx - ew * 0.35, cy - eh * 1.85, cx + ew * 0.35, cy - eh * 1.85, cx + ew, cy)
+  ctx.bezierCurveTo(cx + ew * 0.35, cy + eh * 1.55, cx - ew * 0.35, cy + eh * 1.55, cx - ew, cy)
+  ctx.closePath()
+}
+
+/** One almond eye, ported from the production UmbraEyesCanvas (sclera, iris, pupil, highlight, lid, lash). */
+function drawEye(ctx: CanvasRenderingContext2D, s: Scene, cx: number, cy: number, gx: number, gy: number, open: number, fade: number) {
+  if (open < 0.02 || fade < 0.01) return
+  const ew = s.radius * EYE_HALF_W
+  const eh = ew * 0.59 * open
+  const ix = clamp(cx + gx * 3, cx - ew * 0.3, cx + ew * 0.3)
+  const iy = clamp(cy + gy * 3, cy - ew * 0.59 * 0.4 * open, cy + ew * 0.59 * 0.4 * open)
+  const pulse = (0.7 + 0.3 * ((Math.sin(s.time * 1.5) + 1) / 2)) * fade
+  const irisR = ew * 0.6
+  const pupilR = irisR * 0.36
+
+  const haloR = ew * 1.1
+  const halo = ctx.createRadialGradient(cx, cy, 0, cx, cy, haloR)
+  halo.addColorStop(0, rgba(GLOW, 0.28 * pulse * open))
+  halo.addColorStop(0.5, rgba(GLOW, 0.1 * pulse * open))
+  halo.addColorStop(1, 'rgba(0,0,0,0)')
+  ctx.fillStyle = halo
+  ctx.beginPath()
+  ctx.ellipse(cx, cy, haloR, haloR * 0.65, 0, 0, Math.PI * 2)
+  ctx.fill()
+
+  eyePath(ctx, cx, cy, ew, eh)
+  ctx.fillStyle = rgba(SCLERA, 0.92 * fade)
+  ctx.fill()
+
+  ctx.save()
+  eyePath(ctx, cx, cy, ew, eh)
+  ctx.clip()
+  const ig = ctx.createRadialGradient(ix, iy, 0, ix, iy, irisR)
+  ig.addColorStop(0, rgba(IRIS, pulse))
+  ig.addColorStop(0.42, rgba(IRIS, 0.82 * pulse))
+  ig.addColorStop(0.78, rgba(IRIS, 0.3 * pulse))
+  ig.addColorStop(1, 'rgba(0,0,0,0)')
+  ctx.fillStyle = ig
+  ctx.beginPath()
+  ctx.arc(ix, iy, irisR, 0, Math.PI * 2)
+  ctx.fill()
+  const pg = ctx.createRadialGradient(ix, iy, 0, ix, iy, pupilR)
+  pg.addColorStop(0, rgba(PUPIL, fade))
+  pg.addColorStop(0.7, rgba(PUPIL, 0.92 * fade))
+  pg.addColorStop(1, rgba(PUPIL, 0))
+  ctx.fillStyle = pg
+  ctx.beginPath()
+  ctx.arc(ix, iy, pupilR, 0, Math.PI * 2)
+  ctx.fill()
+  const sx = ix - irisR * 0.26
+  const sy = iy - irisR * 0.28
+  const sg = ctx.createRadialGradient(sx, sy, 0, sx, sy, irisR * 0.16)
+  sg.addColorStop(0, rgba(SPEC, 0.88 * fade))
+  sg.addColorStop(1, 'rgba(255,255,255,0)')
+  ctx.fillStyle = sg
+  ctx.beginPath()
+  ctx.arc(sx, sy, irisR * 0.16, 0, Math.PI * 2)
+  ctx.fill()
+  ctx.restore()
+
+  eyePath(ctx, cx, cy, ew, eh)
+  ctx.strokeStyle = rgba(GLOW, 0.35 * open * pulse)
+  ctx.lineWidth = Math.max(0.65, ew * 0.03)
+  ctx.stroke()
+  if (open > 0.5) {
+    ctx.beginPath()
+    ctx.moveTo(cx - ew * 0.6, cy - eh * 1.2)
+    ctx.bezierCurveTo(cx - ew * 0.2, cy - eh * 1.8, cx + ew * 0.2, cy - eh * 1.8, cx + ew * 0.6, cy - eh * 1.2)
+    ctx.strokeStyle = rgba(GLOW, 0.18 * open * fade)
+    ctx.lineWidth = Math.max(0.9, ew * 0.04)
+    ctx.stroke()
+  }
+}
+
 export function draw(ctx: CanvasRenderingContext2D, s: Scene, shadows: boolean) {
   const { size, cx, cy, radius, particles } = s
   const P = PALETTE
   ctx.clearRect(0, 0, size, size)
 
-  const glow = ctx.createRadialGradient(cx, cy - radius * 0.08, 0, cx, cy, radius * 1.7)
-  glow.addColorStop(0, rgba(P.body, 0.16))
-  glow.addColorStop(0.5, rgba(P.accent, 0.08 + s.settleRatio * 0.05))
+  const glow = ctx.createRadialGradient(cx, cy - radius * 0.08, 0, cx, cy, radius * 1.45)
+  glow.addColorStop(0, rgba(P.body, 0.1))
+  glow.addColorStop(0.5, rgba(P.accent, 0.04 + s.settleRatio * 0.035))
   glow.addColorStop(1, 'rgba(0,0,0,0)')
   ctx.fillStyle = glow
   ctx.fillRect(0, 0, size, size)
 
-  for (const r of s.ripples) {
-    ctx.beginPath()
-    ctx.arc(r.x, r.y, r.radius, 0, Math.PI * 2)
-    ctx.strokeStyle = rgba(P.irisOuter, r.alpha * 0.72)
-    ctx.lineWidth = 1.2
-    ctx.stroke()
-  }
-
   for (const p of particles) {
-    if (p.role === 'eye' || p.role === 'glyph' || p.role === 'rain') continue
+    if (p.role === 'glyph' || p.role === 'rain') continue
     const a = p.state === 'rain' ? 0.5 : p.state === 'spiral' ? 0.78 : p.state === 'scatter' ? 0.58 : 1
     const color =
-      p.state === 'rain' || p.state === 'scatter' ? mix(P.rain, P.code, p.role === 'orbit' ? 0.18 : 0.04)
+      p.state === 'rain' || p.state === 'scatter' ? mix(P.rain, P.code, 0.04)
       : p.state === 'spiral' ? mix(P.rain, P.accent, 0.54)
-      : p.role === 'orbit' ? mix(P.body, P.accent, 0.42) : mix(P.body, P.accent, 0.18)
+      : mix(P.body, P.accent, 0.18)
     trail(ctx, s, p, color, p.alpha * 0.26)
     mark(ctx, p, rgba(color, p.alpha * a))
   }
@@ -435,49 +459,15 @@ export function draw(ctx: CanvasRenderingContext2D, s: Scene, shadows: boolean) 
   if (shadows) { ctx.save(); ctx.shadowBlur = 8; ctx.shadowColor = rgba(P.accent, 0.74) }
   for (const p of particles) {
     if (p.role !== 'glyph') continue
-    const color = p.state === 'rain' || p.state === 'scatter' ? mix(P.rain, P.accent, 0.46) : p.state === 'spiral' ? mix(P.accent, P.irisOuter, 0.18) : P.accent
+    const color = p.state === 'rain' || p.state === 'scatter' ? mix(P.rain, P.accent, 0.46) : p.state === 'spiral' ? mix(P.accent, P.code, 0.3) : P.accent
     trail(ctx, s, p, color, p.alpha * 0.2)
     mark(ctx, p, rgba(color, p.alpha * (p.state === 'settled' ? 0.92 : 0.72)))
   }
   if (shadows) ctx.restore()
 
-  const pulse = 0.42 + 0.58 * ((Math.sin(s.time * PULSE_SPEED) + 1) / 2)
-  for (const e of eyeCenters(s)) {
-    const halo = ctx.createRadialGradient(e.x, e.y, 0, e.x, e.y, radius * 0.38)
-    halo.addColorStop(0, rgba(P.iris, 0.52 * pulse))
-    halo.addColorStop(0.26, rgba(P.irisOuter, 0.24 * pulse))
-    halo.addColorStop(0.65, rgba(P.irisOuter, 0.08 * pulse))
-    halo.addColorStop(1, 'rgba(0,0,0,0)')
-    ctx.fillStyle = halo
-    ctx.beginPath()
-    ctx.arc(e.x, e.y, radius * 0.42, 0, Math.PI * 2)
-    ctx.fill()
-    const core = ctx.createRadialGradient(e.x, e.y, 0, e.x, e.y, radius * 0.11)
-    core.addColorStop(0, rgba(P.iris, 0.9 * pulse))
-    core.addColorStop(0.45, rgba(P.irisOuter, 0.6 * pulse))
-    core.addColorStop(1, 'rgba(140,0,0,0)')
-    ctx.fillStyle = core
-    ctx.beginPath()
-    ctx.arc(e.x, e.y, radius * 0.12, 0, Math.PI * 2)
-    ctx.fill()
-  }
-
-  if (shadows) { ctx.save(); ctx.shadowBlur = 10; ctx.shadowColor = rgba(P.irisOuter, 0.82) }
-  for (const p of particles) {
-    if (p.role !== 'eye') continue
-    const color = p.state === 'rain' || p.state === 'scatter' ? mix(P.irisOuter, P.rain, 0.12) : mix(P.irisOuter, P.iris, p.state === 'spiral' ? 0.28 : 0.18)
-    trail(ctx, s, p, color, p.alpha * 0.28)
-    mark(ctx, p, rgba(color, p.alpha * (p.state === 'settled' ? pulse : 0.58)))
-  }
-  if (shadows) ctx.restore()
-
-  for (const [r, a, w] of [[1.56, 0.05, 1], [1.72, 0.03, 0.8]] as const) {
-    ctx.beginPath()
-    ctx.arc(cx, cy - radius * 0.04, radius * r, 0, Math.PI * 2)
-    ctx.strokeStyle = rgba(P.corona, a + 0.02 * Math.sin(s.time * 0.7))
-    ctx.lineWidth = w
-    ctx.stroke()
-  }
+  // The eyes open once the figure has mostly condensed.
+  const fade = clamp((s.settleRatio - 0.25) / 0.35, 0, 1)
+  eyeCenters(s).forEach((e, i) => drawEye(ctx, s, e.x, e.y, e.gx, e.gy, s.eyes[i].open, fade))
 
   for (const p of particles) {
     if (p.role !== 'rain') continue
