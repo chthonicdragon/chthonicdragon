@@ -17,7 +17,7 @@ Measured 2026-10-19 on the production build (headless Chromium, no horizontal ov
 
 ## Done in this pass
 
-- Umbra particle scene inside the EsotericaOS case (canvas, pauses offscreen and when the tab is hidden, static frame under `prefers-reduced-motion`, 760 particles desktop and 420 mobile). It is labeled as a stylised rendering, not a screenshot.
+- Umbra particle scene inside the EsotericaOS case (canvas port of the EsotericaOS Umbra: code rain is pulled into a spirit silhouette with glowing eyes, orbit ring and glyphs; eyes follow the pointer, click scatters and re-condenses; pauses offscreen and in hidden tabs; finished static frame under `prefers-reduced-motion`; about 480 particles). It is labeled as a stylised rendering, not a screenshot.
 - Fixed the knowledge-graph background color: it read a hex custom property and built an invalid `hsl()` string, so edges and nodes were not drawn in the accent color.
 
 ## Proposal for the next pass

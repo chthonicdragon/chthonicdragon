@@ -7,7 +7,7 @@ import { LinkButton } from '@/components/ui/Button'
 import { BrowserFrame } from '@/components/ui/BrowserFrame'
 import { StatusBadge } from '@/components/ui/StatusBadge'
 import { GithubIcon } from '@/components/ui/icons'
-import { UmbraParticles } from '@/components/effects/UmbraParticles'
+import { UmbraSpirit } from '@/components/effects/UmbraSpirit'
 import { caseStudies, type CaseStudy } from '@/data/caseStudies'
 
 function Fact({ label, children }: { label: string; children: string }) {
@@ -47,9 +47,9 @@ function Case({ study }: { study: CaseStudy }) {
       </Reveal>
       {study.id === 'esoterica-os' ? (
         <Reveal delay={0.1} className="relative mx-auto w-full max-w-[420px]">
-          <UmbraParticles />
+          <UmbraSpirit />
           <p className="mt-2 text-center text-xs text-fg-subtle">
-            Umbra, the AI guide, as a stylised particle rendering. Not a product screenshot.
+            Umbra, the AI guide, condensing out of falling code. A stylised rendering, not a product screenshot.
           </p>
         </Reveal>
       ) : null}
