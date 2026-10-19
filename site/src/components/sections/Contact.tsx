@@ -3,7 +3,7 @@ import { Section } from '@/components/ui/Section'
 import { Container } from '@/components/ui/Container'
 import { Reveal } from '@/components/ui/Reveal'
 import { LinkButton } from '@/components/ui/Button'
-import { GithubIcon, LinkedinIcon } from '@/components/ui/icons'
+import { GithubIcon } from '@/components/ui/icons'
 import { site } from '@/data/site'
 
 const links = [
@@ -18,10 +18,10 @@ export function Contact() {
         <Reveal className="mx-auto max-w-xl text-center">
           <span className="text-sm font-medium tracking-wide text-accent">Contact</span>
           <h2 className="mt-3 text-balance text-3xl font-semibold tracking-tight text-fg sm:text-4xl">
-            Open to remote AI product engineering roles.
+            Open to international opportunities.
           </h2>
           <p className="mt-4 text-balance text-base leading-relaxed text-fg-muted">
-            Based in {site.location}. Reach out directly: I read everything myself.
+            Based in {site.location}. Open to remote collaboration and to relocating for the right role or research opportunity. If this work looks relevant to your team, write to me directly.
           </p>
         </Reveal>
 
@@ -42,16 +42,6 @@ export function Contact() {
               </span>
             </LinkButton>
           ))}
-          <span
-            aria-disabled
-            className="inline-flex items-center gap-3 rounded-full border border-dashed border-border px-5 py-2.5 text-sm text-fg-subtle"
-          >
-            <LinkedinIcon className="h-4 w-4" />
-            <span className="flex flex-col items-start leading-tight">
-              <span className="text-xs">LinkedIn</span>
-              <span>Coming soon</span>
-            </span>
-          </span>
         </Reveal>
       </Container>
     </Section>

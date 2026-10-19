@@ -15,8 +15,7 @@ export function HowIBuild() {
     <Section id="how-i-build">
       <Container>
         <SectionHeader
-          title="How I build"
-          description="Five phases, repeated on every feature. AI moves fast inside them. It doesn't replace them."
+          eyebrow="Process" title="How I build" description="Idea, requirements, task decomposition, agent implementation, review, tests, release, iteration. AI agents move fast inside these steps. They do not replace them."
         />
         <div className="mt-14 grid gap-px overflow-hidden rounded-2xl border border-border bg-border sm:grid-cols-5">
           {pipeline.map((phase, i) => {

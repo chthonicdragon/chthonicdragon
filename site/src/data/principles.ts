@@ -7,21 +7,21 @@ export const principles: Principle[] = [
   {
     title: 'Context over cleverness',
     description:
-      'Every AI-assisted task starts with written intent, decomposition, and explicit confidence levels, not a clever prompt and hope.',
+      'Every agent task starts with written intent, constraints, and acceptance criteria, not a clever prompt and hope.',
   },
   {
-    title: 'Match effort to risk',
+    title: 'Match scrutiny to risk',
     description:
-      'Mechanical, repeatable changes get delegated to lighter models with a precise plan. Architecture, state, security, and payments get done by hand.',
+      'Routine changes get a precise spec and a light review. Architecture, auth, payments, and data migrations get tighter specs, stronger models, and closer human review before anything ships.',
   },
   {
-    title: 'Modular from the first commit',
+    title: 'Verify, do not assume',
     description:
-      'Features are split into types, pure logic, hooks, and components from the start. Files that grow past a few hundred lines get split, not left alone.',
+      'A passing build is not proof of working behavior. I separate what was tested, what was only reasoned about, and what is still unverified, and I say which is which.',
   },
   {
-    title: 'Idempotent by default',
+    title: 'Modular and re-runnable',
     description:
-      'Migrations and infrastructure changes are written to be safely re-run. Production operations should never depend on remembering what already happened.',
+      'Features are split into small modules, and migrations and operations are written to be safely repeated, so production does not depend on remembering what already happened.',
   },
 ]

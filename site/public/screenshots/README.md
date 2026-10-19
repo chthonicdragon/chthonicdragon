@@ -1,7 +1,7 @@
 # Screenshots
 
-Drop real EsotericaOS screenshots here with these exact filenames — the Featured Project section
-picks them up automatically and falls back to a placeholder if a file is missing:
+Drop real EsotericaOS screenshots here with these exact filenames — the case-study section
+renders images listed in `screenshots` in `src/data/caseStudies.ts` (currently none):
 
 - `graph.png` — Personal knowledge graph (large, top-left slot)
 - `umbra.png` — Umbra, the AI guide

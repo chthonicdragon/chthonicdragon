@@ -1,6 +1,8 @@
 # Portfolio site
 
-Personal portfolio for Daniil G. — React, TypeScript, Vite, Tailwind CSS v4, and Framer Motion.
+Personal portfolio for Daniil G., an AI Product Builder with research interests in model behavior, evaluation, and AI safety. React, TypeScript, Vite, Tailwind CSS v4, and Framer Motion.
+
+Strategy, evidence, copy rules, and the plan are in [`docs/`](./docs): `PORTFOLIO_STRATEGY.md`, `PROJECT_EVIDENCE.md`, `CONTENT_AND_VOICE.md`, `IMPLEMENTATION_PLAN.md`. Copy lives in `src/data/*.ts`; every public claim should map to a row in `PROJECT_EVIDENCE.md`.
 
 ## Development
 
@@ -12,11 +14,9 @@ npm run preview   # preview the production build
 npm run lint      # oxlint
 ```
 
-## Adding real EsotericaOS screenshots
+## Screenshots
 
-The Featured Project section reads images from `public/screenshots/` and falls back to a
-placeholder automatically if a file is missing. See `public/screenshots/README.md` for the
-exact filenames expected.
+No screenshots are published. To add one, put the file in `public/screenshots/` and list it in the `screenshots` array of the matching case in `src/data/caseStudies.ts` (see `public/screenshots/README.md`). Only publish captures the owner has permission to share.
 
 ## Deployment
 
