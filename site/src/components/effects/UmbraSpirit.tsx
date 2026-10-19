@@ -2,6 +2,9 @@ import { useEffect, useRef } from 'react'
 import { createScene, draw, repel, scatter, settleInstantly, step, type Input, type Scene } from '@/lib/umbraSpirit'
 
 const FIXED_MS = 1000 / 60
+// Logical simulation size, same as the production panel; only the drawing is scaled up.
+const SIM_W = 340
+const SIM_H = 420
 
 /** Decorative: Umbra condensing out of falling code. Pauses offscreen and in hidden tabs; static frame for reduced motion. */
 export function UmbraSpirit({ className }: { className?: string }) {
@@ -22,6 +25,7 @@ export function UmbraSpirit({ className }: { className?: string }) {
     const input: Input = { x: null, y: null }
     let scene: Scene | null = null
     let width = 0
+    let k = 1
     let frameId: number | null = null
     let visible = false
     let last = 0
@@ -29,14 +33,14 @@ export function UmbraSpirit({ className }: { className?: string }) {
 
     function build() {
       width = Math.round(Math.min(460, Math.max(320, wrap!.clientWidth)))
-      const height = Math.round(width * 1.2)
+      k = width / SIM_W
       const dpr = Math.min(window.devicePixelRatio || 1, coarse ? 1.25 : 1.75)
-      canvas.width = width * dpr
-      canvas.height = height * dpr
+      canvas.width = Math.round(width * dpr)
+      canvas.height = Math.round(SIM_H * k * dpr)
       canvas.style.width = `${width}px`
-      canvas.style.height = `${height}px`
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
-      scene = createScene(width, height, coarse ? 0.7 : 1)
+      canvas.style.height = `${SIM_H * k}px`
+      ctx.setTransform(dpr * k, 0, 0, dpr * k, 0, 0)
+      scene = createScene(SIM_W, SIM_H, coarse ? 0.75 : 1)
       if (reduced) {
         settleInstantly(scene, input)
         draw(ctx, scene, false)
@@ -71,7 +75,7 @@ export function UmbraSpirit({ className }: { className?: string }) {
 
     const local = (e: PointerEvent) => {
       const r = canvas.getBoundingClientRect()
-      return { x: ((e.clientX - r.left) * width) / r.width, y: ((e.clientY - r.top) * width) / r.width }
+      return { x: (e.clientX - r.left) / k, y: (e.clientY - r.top) / k }
     }
     // The gaze follows the pointer anywhere on the page; the figure reacts only near it.
     const onMove = (e: PointerEvent) => {
