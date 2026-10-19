@@ -1,7 +1,8 @@
 import { useEffect, useRef } from 'react'
 import { createNodes, stepNodes, rescaleNodes, LINK_DISTANCE } from '@/lib/knowledgeGraph'
 
-const FALLBACK_ACCENT_HSL = '267 75% 66%'
+// Mirrors --color-accent in index.css; the computed custom property serializes as hex, which breaks `hsl(... / a)`.
+const ACCENT_HSL = '267 75% 66%'
 
 export function KnowledgeGraphBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -15,12 +16,7 @@ export function KnowledgeGraphBackground() {
     const ctx: CanvasRenderingContext2D = context
 
     const reduceMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
-    const accentHsl =
-      getComputedStyle(document.documentElement)
-        .getPropertyValue('--color-accent')
-        .trim()
-        .replace(/^hsl\(/, '')
-        .replace(/\)$/, '') || FALLBACK_ACCENT_HSL
+    const accentHsl = ACCENT_HSL
 
     let width = window.innerWidth
     let height = window.innerHeight

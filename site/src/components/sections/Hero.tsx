@@ -1,8 +1,8 @@
 import { motion } from 'framer-motion'
 import { Container } from '@/components/ui/Container'
-import { Button, LinkButton } from '@/components/ui/Button'
+import { LinkButton } from '@/components/ui/Button'
+import { UmbraSpirit } from '@/components/effects/UmbraSpirit'
 import { site } from '@/data/site'
-import { heroStats } from '@/data/hero'
 
 const ease = [0.16, 1, 0.3, 1] as const
 
@@ -10,28 +10,31 @@ export function Hero() {
   return (
     <section id="top" className="relative overflow-hidden border-b border-border">
       <div aria-hidden className="pointer-events-none absolute inset-0 bg-radial-fade" />
-      <Container className="relative flex min-h-[88vh] flex-col justify-center pt-16 pb-16">
+      <div aria-hidden className="pointer-events-none absolute -right-16 top-1/2 z-0 hidden w-[360px] -translate-y-1/2 opacity-40 lg:block lg:right-[max(1rem,calc((100vw-72rem)/2))] lg:w-[460px] lg:opacity-100">
+        <UmbraSpirit className="mix-blend-screen [mask-image:linear-gradient(to_bottom,transparent,#000_16%,#000_84%,transparent)]" />
+      </div>
+      <Container className="relative z-10 flex min-h-[88vh] flex-col justify-center pt-16 pb-16">
         <motion.p
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease }}
           className="text-sm font-medium tracking-wide text-accent"
         >
-          {site.name}
+          {site.name} · {site.role}
         </motion.p>
         <motion.h1
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.08, ease }}
-          className="mt-4 text-balance text-5xl font-semibold tracking-tight text-fg sm:text-6xl md:text-7xl"
+          className="mt-4 max-w-4xl text-balance text-4xl font-semibold tracking-tight text-fg sm:text-5xl md:text-6xl"
         >
-          {site.role}
+          {site.headline}
         </motion.h1>
         <motion.p
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.16, ease }}
-          className="mt-6 max-w-xl text-balance text-lg leading-relaxed text-fg-muted"
+          className="mt-6 max-w-2xl text-balance text-lg leading-relaxed text-fg-muted"
         >
           {site.tagline}
         </motion.p>
@@ -42,35 +45,24 @@ export function Hero() {
           className="mt-10 flex flex-wrap items-center gap-4"
         >
           <LinkButton href="#work" variant="primary">
-            View Projects
+            View Work
           </LinkButton>
-          <Button
-            variant="secondary"
-            onClick={() => document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' })}
-          >
+          <LinkButton href="#research" variant="secondary">
+            Research Interests
+          </LinkButton>
+          <LinkButton href="#contact" variant="ghost">
             Contact
-          </Button>
+          </LinkButton>
         </motion.div>
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.7, delay: 0.34, ease }}
+          className="mt-10 text-sm text-fg-subtle"
+        >
+          {site.availability}
+        </motion.p>
       </Container>
-
-      <div className="relative border-t border-border bg-bg-elevated/40">
-        <Container>
-          <dl className="grid grid-cols-1 divide-y divide-border sm:grid-cols-3 sm:divide-x sm:divide-y-0">
-            {heroStats.map((stat, i) => (
-              <motion.div
-                key={stat.label}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.3 + i * 0.08, ease }}
-                className="flex flex-col gap-1 py-6 sm:px-8 sm:first:pl-0 sm:last:pr-0"
-              >
-                <dt className="order-2 text-sm text-fg-subtle">{stat.label}</dt>
-                <dd className="order-1 text-3xl font-semibold tracking-tight text-fg">{stat.value}</dd>
-              </motion.div>
-            ))}
-          </dl>
-        </Container>
-      </div>
     </section>
   )
 }

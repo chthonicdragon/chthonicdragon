@@ -8,11 +8,11 @@ export function About() {
   return (
     <Section id="about">
       <Container className="grid gap-12 lg:grid-cols-[1fr_1fr]">
-        <SectionHeader title="AI-native, not AI-assisted as an afterthought." />
+        <SectionHeader eyebrow="About" title="Shipping with agents, and being clear about what that means." />
         <div className="space-y-8">
           <Reveal delay={0.06} className="space-y-5">
             {about.paragraphs.map((p) => (
-              <p key={p} className="text-balance text-lg leading-relaxed text-fg-muted">
+              <p key={p} className="text-lg leading-relaxed text-fg-muted">
                 {p}
               </p>
             ))}
@@ -26,6 +26,9 @@ export function About() {
                 </li>
               ))}
             </ul>
+          </Reveal>
+          <Reveal delay={0.16}>
+            <p className="border-l-2 border-accent-dim pl-4 text-sm leading-relaxed text-fg-subtle">{about.limits}</p>
           </Reveal>
         </div>
       </Container>
