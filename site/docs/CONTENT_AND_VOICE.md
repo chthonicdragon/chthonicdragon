@@ -18,7 +18,7 @@ AI Product Builder who ships products by coordinating AI coding agents, owning r
 
 ## Full summary
 
-I build and ship products through AI-assisted development. I coordinate AI coding agents, define product requirements, evaluate implementations, and manage release readiness. I do not write complex applications from scratch without AI help, and I say so. My main project is EsotericaOS; my second is Rejuv, a pre-alpha research-infrastructure project. My interests include model behavior, interpretability, AI safety, and the open questions around machine consciousness.
+I build and ship products through AI-assisted development. I coordinate AI coding agents, define product requirements, evaluate implementations, and manage release readiness. AI coding agents carry out a large share of the implementation; I own requirements, task design, verification, integrations, and the release decision. My main project is EsotericaOS; my second is Rejuv, a pre-alpha research-infrastructure project. My interests include model behavior, interpretability, AI safety, and the open questions around machine consciousness.
 
 ## Describing AI-assisted development
 
@@ -41,13 +41,10 @@ Natural, professional English. Short sentences, one idea per paragraph, concrete
 
 passionate AI enthusiast · visionary · disruptor · revolutionizing the future · cutting-edge · "40+ routes" / "220+ PRs" without a fresh measurement · "no degree" / "no education".
 
-## Open questions for the owner
+## Decisions and open questions
 
-1. Name: "Daniil G." or full name?
-2. Public email; LinkedIn URL when ready.
-3. Hermes: any documentation, secret-free config, or screenshots?
-4. EsotericaOS: which screenshots may be published; which features are live today?
-5. Rejuv: which materials to show beyond the public repo?
-6. Songvideo: written client consent for name, screenshots, details?
-7. Final domain and release order (canonical URL currently `https://chthonicdragon.github.io/`, unconfirmed).
-8. Should a Russian localization be planned?
+Decided (2026-10-19): name stays "Daniil G." until the full professional name is agreed; the current email is temporary; Russian localization is deferred and English is the priority; the canonical URL is provisional.
+
+Still open: Hermes supporting materials; EsotericaOS screenshots and list of working features; which Songvideo materials may be public; professional email and LinkedIn; final domain.
+
+Research section rule: describe motivation and interests (intelligent systems, internal mechanisms, safety, possible consciousness, AI welfare, human-AI interaction). Do not repeatedly state the absence of publications or qualifications, and do not claim researcher status.

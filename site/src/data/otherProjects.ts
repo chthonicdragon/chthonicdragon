@@ -11,21 +11,22 @@ export const otherProjects: OtherProject[] = [
     name: 'Hermes',
     kind: 'Experiment',
     description:
-      'A personal AI agent experiment running on a dedicated server. A write-up is not published yet; I will add details only once they can be documented accurately.',
+      'My own experimental AI agent, run on a separate VPS. A detailed write-up will follow once it can be documented and shown accurately.',
     tags: ['Personal agent', 'Experiment'],
   },
   {
     name: 'Songvideo Studio',
-    kind: 'Client project',
+    kind: 'Commercial client project',
     description:
-      'A web app built to a client’s requirements that turns a song or lyrics into a vertical video: AI storyboard, media search, and server-side FFmpeg rendering. Source and screenshots are private.',
-    tags: ['Client work', 'LLM workflow', 'FFmpeg', 'Supabase'],
+      'A commercial web app built for a client: it turns a song or lyrics into a vertical video with an AI storyboard, media search, and server-side FFmpeg rendering. Deployed on Cloud.ru and accepted by the client. Source and demonstrations are private; public materials are shared by agreement.',
+    tags: ['Client work', 'LLM workflow', 'FFmpeg', 'Cloud.ru'],
   },
   {
     name: 'Esoterica Astro Engine',
     kind: 'Open source',
-    description: 'Astrology calculation API built with Python, FastAPI, Kerykeion, and Swiss Ephemeris.',
-    tags: ['Python', 'FastAPI', 'Open source'],
+    description:
+      'An open-core HTTP service for astrology calculations: natal planets, house cusps, aspects, and transits. Built on Kerykeion and Swiss Ephemeris with FastAPI. Calculation only, no interpretation. AGPL-3.0.',
+    tags: ['Python', 'FastAPI', 'AGPL-3.0'],
     url: 'https://github.com/chthonicdragon/esoterica-astro-engine',
   },
 ]

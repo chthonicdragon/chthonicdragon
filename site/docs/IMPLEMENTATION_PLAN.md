@@ -37,6 +37,10 @@ Section order: Hero, About, How I Build, Principles, Selected Work, Research, Ex
 
 See task section 11. Mapped here: claims limited to `PROJECT_EVIDENCE.md`; no overflow at 390 px; lint/build pass; no missing images; metadata valid.
 
+## Pass 1.5 (this PR, editorial and fact pass)
+
+Positioning copy made affirmative; EsotericaOS case no longer discloses internal findings; Rejuv statuses checked against code and tests; Songvideo, Hermes, Research, and Astro Engine cards updated; Umbra particle scene added; background color bug fixed. See `VISUAL_DENSITY.md` for the density review and the next-pass proposal.
+
 ## Next passes (not in this PR)
 
 - **Genesis / Build / Esoterica scenes.** No document or repo history of this concept was found in this repository (git log has 8 commits, none mention it). It is a proposal only, not an accepted decision: restrained, optional, canvas-based scenes layered on the existing knowledge-graph background, with static fallback.

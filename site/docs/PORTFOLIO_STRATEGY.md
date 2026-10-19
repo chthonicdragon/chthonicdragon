@@ -25,7 +25,7 @@ Product competence is the main pillar; the research direction is the second. The
 | Track | Focus | Horizon | Evidence today |
 | --- | --- | --- | --- |
 | A | AI Product / Agentic Systems | Near-term professional entry | EsotericaOS, Songvideo Studio, Hermes (unconfirmed) |
-| B | AI Model Behavior / Safety / Welfare | Long-term research path | Rejuv (evaluation/provenance discipline, pre-alpha), stated interests; no published research |
+| B | AI Model Behavior / Safety / Welfare | Long-term research path | Rejuv (evaluation/provenance discipline, pre-alpha), stated research interests |
 
 Track B is presented as interest and direction, not as qualification. Changing the emphasis between tracks is a decision for the owner and must be recorded here.
 
@@ -39,7 +39,7 @@ Track B is presented as interest and direction, not as qualification. Changing t
 
 1. I build and ship products by directing AI coding agents.
 2. I own requirements, review, verification and release decisions.
-3. I am explicit about limits: I do not write complex applications from scratch without AI help.
+3. AI coding agents carry out a large share of the implementation; I own product requirements, task design, coordination, verification, integrations, and release decisions. The site never implies that the code was written solo.
 4. Building with agents made me want to understand model behavior and evaluation, so that is where I am heading.
 
 ## Project priority
@@ -47,7 +47,7 @@ Track B is presented as interest and direction, not as qualification. Changing t
 1. **EsotericaOS**: main implemented case (live product, private source, public showcase).
 2. **Rejuv**: second case, explicitly pre-alpha research infrastructure.
 3. **Hermes**: small experiment card, no architecture claims until confirmed.
-4. **Songvideo Studio, Esoterica Astro Engine**: additional work.
+4. **Songvideo Studio**: real commercial client project, kept as a small additional case (details and demos only as agreed with the owner). **Esoterica Astro Engine**: additional work.
 
 ## Relocation and availability
 

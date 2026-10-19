@@ -7,6 +7,7 @@ import { LinkButton } from '@/components/ui/Button'
 import { BrowserFrame } from '@/components/ui/BrowserFrame'
 import { StatusBadge } from '@/components/ui/StatusBadge'
 import { GithubIcon } from '@/components/ui/icons'
+import { UmbraParticles } from '@/components/effects/UmbraParticles'
 import { caseStudies, type CaseStudy } from '@/data/caseStudies'
 
 function Fact({ label, children }: { label: string; children: string }) {
@@ -21,6 +22,7 @@ function Fact({ label, children }: { label: string; children: string }) {
 function Case({ study }: { study: CaseStudy }) {
   return (
     <article id={study.id} aria-labelledby={`${study.id}-title`} className="scroll-mt-24">
+      <div className={study.id === 'esoterica-os' ? 'grid items-center gap-10 lg:grid-cols-[1.1fr_0.9fr]' : undefined}>
       <Reveal className="max-w-2xl">
         <span className="text-sm font-medium tracking-wide text-accent">{study.eyebrow}</span>
         <h3 id={`${study.id}-title`} className="mt-3 text-balance text-3xl font-semibold tracking-tight text-fg sm:text-4xl">
@@ -43,6 +45,15 @@ function Case({ study }: { study: CaseStudy }) {
           ))}
         </div>
       </Reveal>
+      {study.id === 'esoterica-os' ? (
+        <Reveal delay={0.1} className="relative mx-auto w-full max-w-[420px]">
+          <UmbraParticles />
+          <p className="mt-2 text-center text-xs text-fg-subtle">
+            Umbra, the AI guide, as a stylised particle rendering. Not a product screenshot.
+          </p>
+        </Reveal>
+      ) : null}
+      </div>
 
       {study.screenshots.length > 0 ? (
         <Reveal delay={0.1} className="mt-12 grid gap-6 lg:grid-cols-2">

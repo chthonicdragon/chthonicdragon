@@ -16,6 +16,7 @@ export function Research() {
                 {p}
               </p>
             ))}
+            <p className="text-lg leading-relaxed text-fg">{research.motivation}</p>
             <p className="border-l-2 border-accent-dim pl-4 text-sm leading-relaxed text-fg-subtle">
               {research.caveat}
             </p>

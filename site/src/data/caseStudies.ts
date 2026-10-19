@@ -32,7 +32,7 @@ export const caseStudies: CaseStudy[] = [
     name: 'EsotericaOS',
     summary:
       'A self-initiated AI-native platform that connects personal knowledge, structured records, recurring practice workflows, an AI guide, and community features in one web application.',
-    why: 'It is where I learned what AI-assisted development takes beyond a demo: authorization, cost control, migrations, and living with a product after release.',
+    why: 'It is where I learned what AI-assisted development takes beyond a demo: cost control, security, testing, verifying AI integrations, and keeping a growing product manageable.',
     role: 'Product owner. I defined the concept and priorities, wrote requirements, decomposed work for AI coding agents, reviewed and tested results, and handle releases and server operations. Agents wrote most of the code.',
     sections: [
       {
@@ -41,29 +41,30 @@ export const caseStudies: CaseStudy[] = [
           { text: 'Web app in React and TypeScript with an Express backend and self-hosted Supabase/Postgres' },
           { text: 'Umbra, an AI guide with retrieval, memory, and tool calls' },
           { text: 'Personal knowledge graph and structured journal, ritual, and goal records' },
-          { text: 'Automated tests, SQL migrations, and written audits and roadmaps' },
+          { text: 'Automated tests, idempotent SQL migrations, and written audits and roadmaps' },
         ],
       },
       {
         title: 'Current work',
         items: [
-          { text: 'AI usage metering and real per-run cost measurement', status: 'In progress' },
-          { text: 'Server-side quota enforcement and Free/PRO gating', status: 'In progress' },
+          { text: 'AI usage metering and per-run cost measurement', status: 'In progress' },
+          { text: 'Server-side usage limits and plan gating', status: 'In progress' },
           { text: 'Umbra background autonomy with consent and budget limits', status: 'Planned' },
         ],
       },
     ],
     decisions: [
-      'An internal audit found client-side and quota-accounting weaknesses, so new agentic features were paused until server-side budgets and permissions are in place.',
-      'AI features are treated as costs to meter, not free functionality; "unlimited AI" is deliberately not offered.',
-      'Personal context stays within a controlled provider boundary instead of falling back to any available model.',
+      'Cost control: AI features are treated as costs to meter, so usage limits are enforced on the server and "unlimited AI" is deliberately not offered.',
+      'Security and review: written audits guide which features ship next, and new agentic capabilities wait until their safeguards are in place.',
+      'Complexity: work is split into small modules, with automated tests and repeatable migrations, so the product stays maintainable as it grows.',
+      'AI integrations: personal context stays within a controlled provider boundary, and model behavior is checked rather than assumed.',
     ],
     links: [
       { label: 'Live product', href: 'https://esoterica-os.ru' },
       { label: 'Public showcase', href: 'https://github.com/chthonicdragon/esoterica-os-showcase' },
     ],
     statusLine:
-      'Live product with an ongoing roadmap. Production source is private. Several newer Umbra capabilities exist only as draft pull requests or plans and are not described as live.',
+      'Live product with an ongoing roadmap. Production source is private. Features listed as in progress or planned are not live; a verified list of working features will be added with real screenshots.',
     note: 'The showcase repository documents the product and process without exposing commercial code.',
     screenshots: [],
   },
@@ -79,8 +80,9 @@ export const caseStudies: CaseStudy[] = [
       {
         title: 'Foundations',
         items: [
-          { text: 'InterventionEpisode: the core record (context, intervention, time, measurements, outcomes, evidence)', status: 'Implemented' },
-          { text: 'Machine-readable schemas, source-adapter and release-manifest contracts, versioned readers, and a test suite', status: 'Implemented' },
+          { text: 'InterventionEpisode: the core record (context, intervention, time, measurements, outcomes, evidence) as validated Python models plus an exported JSON Schema', status: 'Implemented' },
+          { text: 'Source-adapter interface, release-manifest fingerprints, and versioned readers with migration paths', status: 'Implemented' },
+          { text: 'Test suite: 32 of 33 checks pass on the current main; one schema-version check fails because of a bug in the test itself, so the local verify script does not yet pass', status: 'In progress' },
           { text: 'Contract alignment, provenance topology, study/control semantics, and reproducible fingerprints', status: 'In progress' },
           { text: 'Real-data corpus, RB01 benchmark, and historical replay with contamination control', status: 'Planned' },
           { text: 'RejuvGym: evaluating how agents choose the next experiment', status: 'Planned' },
@@ -88,7 +90,7 @@ export const caseStudies: CaseStudy[] = [
       },
     ],
     decisions: [
-      'A self-audit found that the Python, JSON Schema, and benchmark semantics disagree in places, so real-data ingestion is paused until those gaps are closed.',
+      'A self-audit (2026-09-26) found that the Python, JSON Schema, and benchmark semantics disagree in places, so real-data ingestion is paused until those gaps are closed.',
       'Uncertainty and missingness are first-class data rather than empty fields.',
       'Explicit non-goals: not a clinical tool, not a medical device, not a longevity recommendation app.',
     ],

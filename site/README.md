@@ -2,7 +2,7 @@
 
 Personal portfolio for Daniil G., an AI Product Builder with research interests in model behavior, evaluation, and AI safety. React, TypeScript, Vite, Tailwind CSS v4, and Framer Motion.
 
-Strategy, evidence, copy rules, and the plan are in [`docs/`](./docs): `PORTFOLIO_STRATEGY.md`, `PROJECT_EVIDENCE.md`, `CONTENT_AND_VOICE.md`, `IMPLEMENTATION_PLAN.md`. Copy lives in `src/data/*.ts`; every public claim should map to a row in `PROJECT_EVIDENCE.md`.
+Strategy, evidence, copy rules, the plan, and the visual density review are in [`docs/`](./docs): `PORTFOLIO_STRATEGY.md`, `PROJECT_EVIDENCE.md`, `CONTENT_AND_VOICE.md`, `IMPLEMENTATION_PLAN.md`, `VISUAL_DENSITY.md`. Copy lives in `src/data/*.ts`; every public claim should map to a row in `PROJECT_EVIDENCE.md`.
 
 ## Development
 

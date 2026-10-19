@@ -12,5 +12,5 @@ export const about = {
     'Iterate on UX and reliability from real behavior',
   ],
   limits:
-    'A boundary worth stating: I do not write complex applications from scratch without AI help, and I am not presenting myself as a software engineer or a researcher. My claim is narrower and checkable: I can take a product from idea to a running release by directing and verifying AI agents.',
+    'AI coding agents carry out a large share of the implementation. My part is the product itself: requirements, task design, coordination, verification, integrations, and the decision to release. That is the scope of what I am showing here.',
 } as const

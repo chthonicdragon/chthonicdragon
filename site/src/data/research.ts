@@ -24,10 +24,16 @@ export const research = {
       description: 'Whether future systems could matter morally, and what evidence would be needed to say so.',
     },
     {
+      title: 'Human-AI interaction',
+      description: 'How people and AI systems will work, learn, and live alongside each other, and what that asks of design and governance.',
+    },
+    {
       title: 'Machine consciousness',
       description: 'An open scientific and philosophical question. I treat it with uncertainty, not as a settled fact.',
     },
   ],
+  motivation:
+    'Why this matters to me: I want to understand how intelligent systems work on the inside, how to make them safe, whether they could one day have experiences that matter morally, and how people and AI will live and work together.',
   caveat:
-    'This is an interest, not a credential. I have no publications or research affiliations. My personal philosophical and spiritual interests explain the breadth of what I read, but I do not treat them as evidence about whether any current model is conscious.',
+    'These are my research interests and the direction I am learning toward. My philosophical and spiritual background shapes what I read, but I do not treat it as evidence about whether any current model is conscious.',
 } as const
