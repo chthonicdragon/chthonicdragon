@@ -6,6 +6,11 @@
 import { drawEyes, type RGB } from '@/lib/umbraEyes'
 
 const BODY: RGB = [75, 18, 145]
+// Vertical tint: cool blue-violet at the hood, warm magenta toward the base.
+const TINT_TOP: RGB = [58, 44, 205]
+const TINT_BOTTOM: RGB = [165, 26, 160]
+const SPARK_LILAC: RGB = [235, 175, 255]
+const SPARK_COLD: RGB = [95, 160, 255]
 const EYE: RGB = [255, 205, 90]
 const GLYPH: RGB = [200, 105, 255]
 const EYE_SPEED = 0.8
@@ -15,6 +20,7 @@ const LOOK_SPEED = 0.09
 const BLINK_MIN = 2
 const BLINK_MAX = 5
 
+// The production "spirit" form: six overlapping blobs plus a radial falloff.
 const BLOBS = [
   { dx: 0, dy: 0, rx: 1, ry: 1, w: 1 },
   { dx: 0, dy: -0.38, rx: 0.55, ry: 0.5, w: 0.65 },
@@ -23,6 +29,16 @@ const BLOBS = [
   { dx: 0.08, dy: 0.42, rx: 0.38, ry: 0.4, w: 0.3 },
   { dx: -0.18, dy: -0.28, rx: 0.32, ry: 0.35, w: 0.32 },
 ] as const
+
+// Gentle hood warp applied before the blob lookup: narrower crown, fuller base, slight lean.
+const smooth = (t: number) => {
+  const c = Math.min(1, Math.max(0, t))
+  return c * c * (3 - 2 * c)
+}
+const WARP_TOP = 0.7
+const WARP_BASE = 1.12
+const WARP_Y = 0.86
+const LEAN = -0.07
 
 const RUNES = 'ᛟᛞᚾᛗᛚᛇᛈᛉᛋᛏᛒᛖᚦᚱᚨ'
 const SYMBOLS = '☉☽☿♀♂♃♄♅♆⚚'
@@ -94,19 +110,27 @@ const rightEye = (s: Scene) => ({ x: s.CX + s.R * 0.28, y: s.CY - s.R * 0.22 })
 function sampleBody(s: Scene) {
   const { R, CX, CY } = s
   for (let a = 0; a < 400; a++) {
-    const x = (Math.random() * 2 - 1) * R * 1.03
-    const y = (Math.random() * 2 - 1) * R * 1.08
+    const nx = (Math.random() * 2 - 1) * 1.2
+    const ny = rnd(-1.3, 1.2)
+    const width = WARP_TOP + (WARP_BASE - WARP_TOP) * smooth((ny + 1) / 1.8)
+    const lean = LEAN * Math.max(0, -ny - 0.15)
+    const x = ((nx - lean) / width) * R
+    const y = ny * WARP_Y * R
     let value = 0
     for (const b of BLOBS) {
-      const nx = (x - b.dx * R) / (R * b.rx)
-      const ny = (y - b.dy * R) / (R * b.ry)
-      value += b.w * Math.exp(-(nx * nx + ny * ny) * 2.8)
+      const bx = (x - b.dx * R) / (R * b.rx)
+      const by = (y - b.dy * R) / (R * b.ry)
+      value += b.w * Math.exp(-(bx * bx + by * by) * 2.8)
     }
     const radial = Math.exp(-((x * x) / (R * R * 0.62) + (y * y) / (R * R * 0.68)))
     const density = Math.min(1, value * 0.6 + radial * 0.82)
-    if (density > 0.2 + Math.random() * 0.1) return { x: CX + x, y: CY + y - R * 0.02, density }
+    if (density > 0.2 + Math.random() * 0.1) return { x: CX + nx * R, y: CY + ny * R - R * 0.02, density }
   }
   return { x: CX, y: CY, density: 1 }
+}
+
+function tint(a: RGB, b: RGB, t: number): RGB {
+  return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t]
 }
 
 function initRain(s: Scene, i: number, visible = false) {
@@ -135,7 +159,14 @@ function initRain(s: Scene, i: number, visible = false) {
     s.chars[i] = bin ? pick(BINARY) : Math.random() < 0.035 ? pick(RUNES) : null
     s.size[i] = bin ? 3 + Math.random() * 1.8 : 1.4 + Math.random() * 2
   }
-  const col = ty === T_EYE ? EYE : ty === T_GLYPH ? GLYPH : BODY
+  let col: RGB = ty === T_EYE ? EYE : ty === T_GLYPH ? GLYPH : BODY
+  if (ty === T_BODY || ty === T_GLYPH) {
+    const k = Math.min(1, Math.max(0, ((s.hy[i] - s.CY) / s.R + 1.1) / 2.2))
+    col = tint(ty === T_GLYPH ? tint([150, 120, 255], GLYPH, k) : TINT_TOP, ty === T_GLYPH ? [225, 120, 235] : TINT_BOTTOM, k)
+    const roll = Math.random()
+    if (roll < 0.07) col = SPARK_LILAC
+    else if (roll < 0.14) col = SPARK_COLD
+  }
   s.r[i] = col[0]
   s.g[i] = col[1]
   s.b[i] = col[2]
