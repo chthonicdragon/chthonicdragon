@@ -1,5 +1,7 @@
 import { useEffect, useRef } from 'react'
-import { createScene, draw, scatter, settleInstantly, step, type Input, type Scene } from '@/lib/umbraSpirit'
+import { createScene, draw, repel, scatter, settleInstantly, step, type Input, type Scene } from '@/lib/umbraSpirit'
+
+const FIXED_MS = 1000 / 60
 
 /** Decorative: Umbra condensing out of falling code. Pauses offscreen and in hidden tabs; static frame for reduced motion. */
 export function UmbraSpirit({ className }: { className?: string }) {
@@ -17,22 +19,24 @@ export function UmbraSpirit({ className }: { className?: string }) {
 
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     const coarse = window.matchMedia('(pointer: coarse)').matches
-    const input: Input = { x: null, y: null, hovered: false }
+    const input: Input = { x: null, y: null }
     let scene: Scene | null = null
-    let size = 0
+    let width = 0
     let frameId: number | null = null
     let visible = false
     let last = 0
+    let acc = 0
 
     function build() {
-      size = Math.max(200, Math.round(wrap!.clientWidth))
-      const dpr = Math.min(window.devicePixelRatio || 1, 1.25)
-      canvas.width = size * dpr
-      canvas.height = size * dpr
-      canvas.style.width = `${size}px`
-      canvas.style.height = `${size}px`
+      width = Math.round(Math.min(460, Math.max(320, wrap!.clientWidth)))
+      const height = Math.round(width * 1.2)
+      const dpr = Math.min(window.devicePixelRatio || 1, coarse ? 1.25 : 1.75)
+      canvas.width = width * dpr
+      canvas.height = height * dpr
+      canvas.style.width = `${width}px`
+      canvas.style.height = `${height}px`
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
-      scene = createScene(size, reduced ? 0.7 : coarse ? 0.76 : 1)
+      scene = createScene(width, height, coarse ? 0.7 : 1)
       if (reduced) {
         settleInstantly(scene, input)
         draw(ctx, scene, false)
@@ -42,15 +46,22 @@ export function UmbraSpirit({ className }: { className?: string }) {
     function frame(now: number) {
       frameId = null
       if (!visible || document.hidden || !scene) return
-      const dt = Math.min(0.033, last ? (now - last) / 1000 : 1 / 60)
+      acc += Math.min(100, last ? now - last : FIXED_MS)
       last = now
-      step(scene, dt, input)
-      draw(ctx, scene, !coarse)
+      let steps = 0
+      while (acc >= FIXED_MS && steps < 6) {
+        step(scene, input)
+        acc -= FIXED_MS
+        steps++
+      }
+      if (input.x !== null && input.y !== null) repel(scene, input.x, input.y)
+      draw(ctx, scene)
       frameId = requestAnimationFrame(frame)
     }
     const start = () => {
       if (reduced || frameId !== null) return
       last = 0
+      acc = 0
       frameId = requestAnimationFrame(frame)
     }
     const stop = () => {
@@ -60,23 +71,21 @@ export function UmbraSpirit({ className }: { className?: string }) {
 
     const local = (e: PointerEvent) => {
       const r = canvas.getBoundingClientRect()
-      return { x: ((e.clientX - r.left) * size) / r.width, y: ((e.clientY - r.top) * size) / r.height, r }
+      return { x: ((e.clientX - r.left) * width) / r.width, y: ((e.clientY - r.top) * width) / r.width }
     }
-    // Gaze follows the pointer anywhere on the page; scatter force only applies while over the canvas.
+    // The gaze follows the pointer anywhere on the page; the figure reacts only near it.
     const onMove = (e: PointerEvent) => {
       const { x, y } = local(e)
       input.x = x
       input.y = y
-      input.hovered = !!scene && Math.hypot(x - scene.cx, y - scene.cy) < scene.radius * 1.3
     }
     const onLeaveDoc = () => {
       input.x = null
       input.y = null
-      input.hovered = false
     }
     const onDown = (e: PointerEvent) => {
       const { x, y } = local(e)
-      if (scene && Math.hypot(x - scene.cx, y - scene.cy) < scene.radius * 1.3) scatter(scene, x, y)
+      if (scene && Math.hypot(x - scene.CX, y - scene.CY) < scene.R * 1.3) scatter(scene)
     }
     const onVisibility = () => (document.hidden ? stop() : visible && start())
 
@@ -88,7 +97,8 @@ export function UmbraSpirit({ className }: { className?: string }) {
     })
     io.observe(wrap)
     const ro = new ResizeObserver(() => {
-      if (Math.abs(wrap.clientWidth - size) > 4) build()
+      const w = Math.round(Math.min(460, Math.max(320, wrap.clientWidth)))
+      if (w !== width) build()
     })
     ro.observe(wrap)
     window.addEventListener('pointermove', onMove, { passive: true })
@@ -108,7 +118,7 @@ export function UmbraSpirit({ className }: { className?: string }) {
 
   return (
     <div ref={wrapRef} className={className} aria-hidden="true">
-      <canvas ref={canvasRef} className="block" />
+      <canvas ref={canvasRef} className="mx-auto block" />
     </div>
   )
 }

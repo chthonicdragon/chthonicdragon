@@ -49,8 +49,8 @@ function Case({ study }: { study: CaseStudy }) {
         ) : null}
       </Reveal>
       {study.id === 'esoterica-os' ? (
-        <div className="pointer-events-none relative z-0 mx-auto aspect-square w-full max-w-[420px]" aria-hidden="true">
-          <UmbraSpirit className="absolute left-1/2 top-1/2 w-[190%] -translate-x-1/2 -translate-y-1/2 mix-blend-screen [mask-image:radial-gradient(closest-side,#000_52%,transparent_100%)]" />
+        <div className="pointer-events-none relative z-0 mx-auto w-full max-w-[460px]" aria-hidden="true">
+          <UmbraSpirit className="mix-blend-screen [mask-image:linear-gradient(to_bottom,transparent,#000_16%,#000_84%,transparent)]" />
         </div>
       ) : null}
       </div>

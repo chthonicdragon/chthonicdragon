@@ -17,7 +17,7 @@ Measured 2026-10-19 on the production build (headless Chromium, no horizontal ov
 
 ## Done in this pass
 
-- Umbra scene beside the EsotericaOS case: a canvas port of the EsotericaOS Umbra. Code rain is pulled into a spirit silhouette; the eyes are the almond eyes of the production `UmbraEyesCanvas` (iris, pupil, highlight, blinking, gaze that follows the pointer) and open once the figure has condensed. No orbit ring, eye rings, or corona. The canvas has no box: it is larger than its column, uses `mix-blend-screen` and a radial mask so the rain fades into the page background. It pauses offscreen and in hidden tabs; reduced motion shows the finished static frame. It is labeled as a stylised rendering, not a screenshot.
+- Umbra scene beside the EsotericaOS case: a canvas port of the production Umbra scene (`UmbraAscendantScene`, default spirit form, "speaking" palette). Code rain is pulled by gravity into a dense figure of pixel squares, runes and planetary symbols, with the production eyes (amber iris, vertical slit pupil, catchlights, blinking, gaze following the pointer). Orbit ring, eye rings, and outer rings are intentionally left out. The canvas is transparent and fades at the top and bottom, so the figure sits on the page background with no panel. Fixed 60 Hz simulation; pauses offscreen and in hidden tabs; reduced motion shows the finished frame. It is labeled as a stylised rendering, not a screenshot.
 - Fixed the knowledge-graph background color: it read a hex custom property and built an invalid `hsl()` string, so edges and nodes were not drawn in the accent color.
 
 ## Proposal for the next pass
